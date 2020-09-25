@@ -4,12 +4,21 @@
 <script type="text/javascript">
     var socket = io();
     console.log('connected to socket with id=%s', socket.id);
+
+    function sendMessage() {
+        var u = document.f.user.value;
+        var m = document.f.msg.value;
+        console.log('user=%s, msg=%s', u, m);
+
+        socket.emit('chat-message', u, m);
+        document.f.msg.value = '';
+    }
 </script>
 </head>
 <body>
     <h1>this is external file</h1>
     test of diacritics: [ěščřžýáíé]
-    <form>
+    <form name="f">
         User: <input type="text" size="40" name="user">
 
         <br>
@@ -18,7 +27,7 @@
         <textarea name="msg" rows="10" cols="80"></textarea>
 
         <br>
-        <input type="button" name="send" value="Send">
+        <input type="button" name="send" value="Send" onClick="sendMessage()">
     </form>
 </body>
 

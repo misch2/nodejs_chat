@@ -16,8 +16,13 @@ server.listen(process.env.PORT || 8000, () => {
 
 io.on('connection', (socket) => {
     console.log('new connection as %s', socket.id);
+
     socket.on('disconnect', () => {
         console.log('%s disconnected', socket.id);
+    });
+
+    socket.on('chat-message', (user, msg) => {
+        console.log('got message "%s" from "%s"', msg, user);
     });
 });
 
