@@ -1,8 +1,24 @@
 <html>
 <head>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    var socket = io();
+    console.log('connected to socket with id=%s', socket.id);
+</script>
 </head>
 <body>
-<h1>this is external file</h1>
-test of diacritics: [ěščřžýáíé]
+    <h1>this is external file</h1>
+    test of diacritics: [ěščřžýáíé]
+    <form>
+        User: <input type="text" size="40" name="user">
+
+        <br>
+        Message: 
+        <br>
+        <textarea name="msg" rows="10" cols="80"></textarea>
+
+        <br>
+        <input type="button" name="send" value="Send">
+    </form>
 </body>
 
