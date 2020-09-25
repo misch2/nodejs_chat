@@ -1,12 +1,11 @@
 const express = require('express')
 const app = express()
 
-// obsluha '/' URL:
+// expose everything in this folder for serving over http:
+app.use(express.static(__dirname + '/public'));
+// manage special '/' URL (otherwise we would get just a 'Cannot GET /' error message):
 app.get('/', (req, res) => {
-    res.send('Ahoj, testuji češtinu');
-});
-app.get('/soubor', (req, res) => {
-    res.sendFile(__dirname + '/example.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 app.listen(8000, () => {
