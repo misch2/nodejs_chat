@@ -10,19 +10,23 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-server.listen(process.env.PORT || 8000, () => {
-    console.log('Started server');
+const port = process.env.PORT || 8000
+server.listen(port, () => {
+    console.log('Started server on http://localhost:%d/', port);
 });
 
 io.on('connection', (socket) => {
     console.log('new connection as %s', socket.id);
+    socket.emit('system-message', 'New user connected: '+socket.id);    // to all, excluding me
 
     socket.on('disconnect', () => {
         console.log('%s disconnected', socket.id);
+        io.emit('system-message', 'User disconnected: '+socket.id);
     });
 
-    socket.on('chat-message', (user, msg) => {
-        console.log('got message "%s" from "%s"', msg, user);
+    socket.on('chat-message-client', (data) => {
+        console.debug('%s: got message "%o"', socket.id, data);
+        io.emit('chat-message-server', data);   // to all, including me
     });
 });
 

@@ -1,25 +1,39 @@
 <html>
 <head>
+<title>Online chat</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
     var socket = io();
     console.log('connected to socket with id=%s', socket.id);
+
+    socket.on('chat-message-server', (data) => {
+        console.log('received %o from server', data);
+        var line = data.user + ": " + data.message + "<br>\n";
+        $('#chatlog').prepend(line);
+    });
+
+    socket.on('system-message', (msg) => {
+        var line = "<i>" + msg + "</i><br>\n";
+        $('#chatlog').prepend(line);
+    });
 
     function sendMessage() {
         var u = document.f.user.value;
         var m = document.f.msg.value;
         console.log('user=%s, msg=%s', u, m);
 
-        socket.emit('chat-message', u, m);
+        socket.emit('chat-message-client', {"user": u, "message": m});
         document.f.msg.value = '';
-    }
+    };
+
+    $('input[name=msg]').focus();
 </script>
 </head>
 <body>
-    <h1>this is external file</h1>
-    test of diacritics: [ěščřžýáíé]
+    <h1>Online chat</h1>
     <form name="f">
-        User: <input type="text" size="40" name="user">
+        User: <input type="text" size="40" name="user" value="Anonymous user">
 
         <br>
         Message: 
@@ -29,5 +43,8 @@
         <br>
         <input type="button" name="send" value="Send" onClick="sendMessage()">
     </form>
+    <hr>
+    <div id="chatlog">
+    </div>
 </body>
 
