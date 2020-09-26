@@ -5,46 +5,63 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+    function sanitize(string) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;',
+            "/": '&#x2F;',
+        };
+        const reg = /[&<>"'/]/ig;
+        return string.replace(reg, (match)=>(map[match]));
+    };
+
     var socket = io();
     console.log('connected to socket with id=%s', socket.id);
 
-    socket.on('chat-message-server', (data) => {
-        console.log('received %o from server', data);
-        var line = data.user + ": " + data.message + "<br>\n";
-        $('#chatlog').prepend(line);
+    socket.on('stats', data => {
+        $('#users_cnt').text(data.users_cnt);
     });
 
-    socket.on('system-message', (msg) => {
-        var line = "<i>" + msg + "</i><br>\n";
-        $('#chatlog').prepend(line);
+    socket.on('chat-message-server', data => {
+        var line = '<span class="chat-message-user">'+sanitize(data.user) + '</span>: <span class="chat-message-content">' + sanitize(data.message) + '</span>';
+        $('#chatlog').prepend('<div class="chat-message">'+line+'</div>');
+    });
+
+    socket.on('system-message', msg => {
+        $('#chatlog').prepend('<div class="system-message">' + msg + '</div>');
     });
 
     function sendMessage() {
-        var u = document.f.user.value;
-        var m = document.f.msg.value;
-        console.log('user=%s, msg=%s', u, m);
+        var u = $('#user').val();
+        var m = $('#msg').val();
+        //console.log('user=%s, msg=%s', u, m);
 
         socket.emit('chat-message-client', {"user": u, "message": m});
-        document.f.msg.value = '';
+        $('#msg').val('').focus();
     };
 
-    $('input[name=msg]').focus();
+    $(document).ready(() => $('#msg').focus());
 </script>
 </head>
 <body>
     <div id="main">
         <h1>Online chat</h1>
-        <form name="f">
-            User: <input type="text" size="40" name="user" value="Anonymous user">
+        <p>
+            <i>(<span id="users_cnt">0</span> connected users)</i>
+        </p>
+        Nick: <input type="text" size="20" name="user" id="user" value="Anonymous user" data-lpignore="true">
 
-            <br>
-            Message: 
-            <br>
-            <textarea name="msg" rows="10" cols="80"></textarea>
+        <br>
+        <br>
+        Message:
+        <br>
+        <textarea name="msg" id="msg"></textarea>
 
-            <br>
-            <input type="button" name="send" value="Send" onClick="sendMessage()">
-        </form>
+        <br>
+        <input type="button" name="send" value="Send" onClick="sendMessage()">
     </div>
     <hr>
     <div id="chatlog">
