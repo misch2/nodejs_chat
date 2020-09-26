@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
 
         // keep history
         history.push(data);
-        if (history.length > 5) {
+        if (history.length > 100) {
             history.shift();
         }
         //console.debug('history: %o', history);
