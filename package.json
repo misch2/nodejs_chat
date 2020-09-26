@@ -1,8 +1,14 @@
 {
     "name": "example-chat",
     "version": "0.0.1",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/misch2/nodejs_chat"
+    },
     "dependencies": {
         "express": "^4.17.1",
+        "sass": "^1.26.11",
         "socket.io": "^2.3.0"
     }
 }
