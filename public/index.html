@@ -19,15 +19,23 @@
     };
 
     var socket = io();
-    console.log('connected to socket with id=%s', socket.id);
 
-    socket.on('stats', data => {
-        $('#users_cnt').text(data.users_cnt);
+    socket.on('stats', stats => {
+        $('#users_cnt').text(stats.users_cnt);
     });
 
-    socket.on('chat-message-server', data => {
+    function addSingleMessage(data) {
         var line = '<span class="chat-message-user">'+sanitize(data.user) + '</span>: <span class="chat-message-content">' + sanitize(data.message) + '</span>';
         $('#chatlog').prepend('<div class="chat-message">'+line+'</div>');
+    };
+
+    socket.on('chat-message-server', data => addSingleMessage(data));
+    
+    socket.on('history', data => {
+        $('#chatlog').html('');
+        for (i=0; i<data.length; i++) {
+            addSingleMessage(data[i]);
+        };
     });
 
     socket.on('system-message', msg => {

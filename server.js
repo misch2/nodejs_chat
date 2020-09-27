@@ -37,9 +37,7 @@ io.on('connection', (socket) => {
     update_stats();
 
     // send full history to this new client:
-    for (var i=0; i < history.length; i++) {
-        socket.emit('chat-message-server', history[i]);
-    };
+    socket.emit('history', history);    // send as full package, not as individual requests, because connect/reconnect can happen anytime (even due to timeout) and client must first it's chatlog content when receiving history to prevent duplicates
 
     socket.on('disconnect', () => {
         console.log('%s disconnected', socket.id);
